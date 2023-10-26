@@ -1,12 +1,18 @@
 #include "request_queue.h"
 
-
-RequestQueue::RequestQueue(const SearchServer& search_server): 
-    search_server_(search_server),
-    no_results_requests_(0),
-    current_time_(0){
+std::vector<Document> RequestQueue::AddFindRequest(const std::string& raw_query, DocumentStatus status) {
+    const std::vector<Document> result = search_server_.FindTopDocuments(raw_query,status);
+    int results_num = static_cast<int>(result.size());
+    AddRequest(results_num);
+    return result;
 }
 
+std::vector<Document> RequestQueue::AddFindRequest(const std::string& raw_query) {
+    const std::vector<Document> result = search_server_.FindTopDocuments(raw_query);
+    int results_num = static_cast<int>(result.size());
+    AddRequest(results_num);
+    return result;
+}
 int RequestQueue::GetNoResultRequests() const {
     return no_results_requests_;
 }
